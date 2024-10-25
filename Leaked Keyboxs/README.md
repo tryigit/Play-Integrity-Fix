@@ -12,7 +12,7 @@ Google can detect a Keybox leak in just 12 hours (Search bot), and less if many 
 If some stupid people hint and it starts spreading, I decide to share it here because Github repos and commits don't fall directly into search engine databases unless they are extremely popular.
 But too many people using it is more dangerous than a low-starred repo.
 
-Of course, if one day this fork repo becomes very popular, I will think differently (like guide approved people).
+~~Of course, if one day this fork repo becomes very popular, I will think differently (like guide approved people).~~
 
 ### Known Things:
 
