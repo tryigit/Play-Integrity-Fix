@@ -26,7 +26,7 @@ Solution:
 Solution:
 (https://github.com/tryigit/PlayIntegrityFix/issues/16#issue-2569737368)
 
-Google has set up an automated system so that it will not do anything unless something that is not easy to find and will not damage the company's reputation is found. In addition, Google employees are almost not even interested in Play Imtegrity and don't care. 
+Google has set up an automated system so that it will not do anything unless something that is not easy to find and will not damage the company's reputation is found. In addition, Google employees are almost not even interested in Play Integrity and don't care. 
 
 
 *If you think Google employees care about you and walk among you, you are just dreaming children.*
