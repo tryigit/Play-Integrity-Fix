@@ -1,1 +1,33 @@
+name: CI
 
+on:
+  push:
+    branches:
+      - main
+      - Check-CI
+    paths-ignore:
+      - "status.csv"
+      - "README.md"
+  pull_request:
+    branches:
+    - main
+    - Check-CI
+  schedule:
+    - cron:  "0 * * * *"
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+  
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r .github/requirements.txt
+      - run: python3 .github/check.py
+      - uses: stefanzweifel/git-auto-commit-action@v5
