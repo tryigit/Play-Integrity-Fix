@@ -12,7 +12,7 @@ Since all users generally use this module, China Rom developments are integrated
 New and improved version that passes the Strong test (Includes BL Hiding). Infrastructure by Lsposed developers. Target apps can be customized, does not affect the system. Default to affect all apps.
 
 ### PIFS Required
-* Android 12+
+* Android 11+
 * Zygisk
 * 64bit cpu (armv8a)
 * Official Rom (China Recommended)
