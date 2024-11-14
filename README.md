@@ -16,6 +16,7 @@ New and improved version that passes the Strong test (Includes BL Hiding). Infra
 * Zygisk
 * 64bit cpu (armv8a)
 * Official Rom (China Recommended)
+* Magisk or Kernelsu
 
 ## PIFB China
 **P**lay **I**ntegrity **F**ix Lite
@@ -28,6 +29,7 @@ Old and less ram usage method. It does not affect the orther apps in the same wa
 * 64bit cpu (armv8a)
 * Any Rom (China Recommended)
 * TEE Supported Device (Not Broken)
+* Magisk or Kernelsu
 
 > [!WARNING]
 > The reason fingerprints/keyboxs inside the module are banned is too many test checks. So do not check unnecessarily.
