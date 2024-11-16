@@ -62,9 +62,6 @@ def parse_cert(cert: str) -> Optional[str]:
 
 def extract_certs(file_path: str) -> List[str]:
     """Extract certificates from Keybox files (only .xml files)."""
-    if not file_path.lower().endswith('.xml'):
-        return []
-
     try:
         tree = ET.parse(file_path)
         root = tree.getroot()
@@ -74,16 +71,14 @@ def extract_certs(file_path: str) -> List[str]:
         return []
 
 def main():
-    total_keyboxes = revoked_keyboxes = valid_keyboxes = invalid_keyboxes = invalid_files = 0
+    total_keyboxes = revoked_keyboxes = valid_keyboxes = invalid_keyboxes = 0
 
     directory = args.path
     for filename in os.listdir(directory):
         file_path = os.path.join(directory, filename)
-        if os.path.isdir(file_path):
-            continue
 
+        # Skip non-.xml files
         if not filename.lower().endswith('.xml'):
-            invalid_files += 1
             continue
 
         total_keyboxes += 1
@@ -111,12 +106,12 @@ def main():
             logging.info(f"   EC Cert Serial Number: {ec_cert_sn}\n   RSA Cert Serial Number: {rsa_cert_sn}")
             valid_keyboxes += 1
 
+    # Summary Results
     logging.info(f'\n{Fore.CYAN}{BOLD}Summary:')
     logging.info(f'  Total XML files examined: {total_keyboxes}')
     logging.info(f'  Valid Certificates: {valid_keyboxes}')
     logging.info(f'  Revoked Certificates: {revoked_keyboxes}')
     logging.info(f'  Invalid Keyboxes: {invalid_keyboxes}')
-    logging.info(f'  Non-XML Files: {invalid_files}')
 
 if __name__ == "__main__":
     main()
