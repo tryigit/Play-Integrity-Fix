@@ -30,3 +30,6 @@ Google has set up an automated system so that it will not do anything unless som
 
 
 *If you think Google employees care about you and walk among you, you are just dreaming children.*
+
+###  Google Revoked List
+> https://android.googleapis.com/attestation/status
