@@ -112,7 +112,7 @@ in device
 /data/adb/tricky_store/keybox.xml
 ```
 **Simple Strong Guide:**
-in maintenance.
+Just move the Keybox file you found to the right directory.
 
 ## All Target Setting (PIFS)
 Add all apps to the target.txt list automatically. It is enabled by default and needs to be removed to customize.
