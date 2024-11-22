@@ -1,4 +1,5 @@
 # Telegram @cleverestech
+
 import requests
 import os
 import xml.etree.ElementTree as ET
@@ -8,12 +9,14 @@ from colorama import Fore, Style, init
 from typing import Optional, List
 import logging
 import sys
+import json
+import subprocess
 
 # Initialize colorama
 init(autoreset=True)
 
 # Setup logging
-logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(message)s')
 
 # ANSI escape codes for bold text
 BOLD = Style.BRIGHT
@@ -31,18 +34,13 @@ args = parser.parse_args()
 def fetch_crl(url: str, timeout: int = TIMEOUT) -> Optional[dict]:
     """Fetch Certificate Revocation List (CRL) with cache and cookies disabled."""
     try:
-        session = requests.Session()
-        session.cookies.clear()
-        headers = {
-            'Cache-Control': 'no-cache, no-store, must-revalidate',
-            'Pragma': 'no-cache',
-            'Expires': '0'
-        }
-        response = session.get(url, headers=headers, timeout=timeout)
-        response.raise_for_status()
-        return response.json()
-    except requests.RequestException as e:
-        logging.error(f"Failed to fetch CRL: {e}")
+        # Download CRL directly to a variable using subprocess
+        process = subprocess.Popen(['curl', '-s', url], stdout=subprocess.PIPE)
+        output, _ = process.communicate()
+        crl = json.loads(output)
+        return crl
+    except Exception as e:
+        logging.error(f"Failed to fetch or parse CRL: {e}")
         return None
 
 crl = fetch_crl(CRL_URL)
@@ -74,6 +72,9 @@ def main():
     total_keyboxes = revoked_keyboxes = valid_keyboxes = invalid_keyboxes = 0
 
     directory = args.path
+    strong_keyboxes_dir = os.path.join(directory, "Strong Keyboxes")
+    os.makedirs(strong_keyboxes_dir, exist_ok=True)  # Create the directory if it doesn't exist
+
     for filename in os.listdir(directory):
         file_path = os.path.join(directory, filename)
 
@@ -85,7 +86,8 @@ def main():
         certs = extract_certs(file_path)
 
         if len(certs) < 4:
-            logging.info(f"{Fore.YELLOW}{BOLD}{filename} doesn't contain enough certificate data!")
+            logging.info(f"\n{Fore.YELLOW}{BOLD}[INVALID] {filename}")
+            logging.info(f"  Reason: Not enough certificate data.")
             invalid_keyboxes += 1
             continue
 
@@ -93,25 +95,32 @@ def main():
         rsa_cert_sn = parse_cert(certs[3])
 
         if not ec_cert_sn or not rsa_cert_sn:
-            logging.warning(f"{filename} - Error parsing certificate data.")
+            logging.info(f"\n{Fore.RED}{BOLD}[ERROR] {filename}")
+            logging.info(f"  Reason: Certificate parsing failed.")
             invalid_keyboxes += 1
             continue
 
         if any(sn in crl["entries"] for sn in (ec_cert_sn, rsa_cert_sn)):
-            logging.info(f"{Fore.RED}{BOLD}{filename} Key has been revoked.")
-            logging.info(f"   EC Cert Serial Number: {ec_cert_sn}\n   RSA Cert Serial Number: {rsa_cert_sn}")
+            logging.info(f"\n{Fore.RED}{BOLD}[REVOKED] {filename}")
+            logging.info(f"  EC Cert Serial Number: {ec_cert_sn}")
+            logging.info(f"  RSA Cert Serial Number: {rsa_cert_sn}")
             revoked_keyboxes += 1
         else:
-            logging.info(f"{Fore.GREEN}{BOLD}{filename} is valid.")
-            logging.info(f"   EC Cert Serial Number: {ec_cert_sn}\n   RSA Cert Serial Number: {rsa_cert_sn}")
+            logging.info(f"\n{Fore.GREEN}{BOLD}[VALID] {filename}")
+            logging.info(f"  EC Cert Serial Number: {ec_cert_sn}")
+            logging.info(f"  RSA Cert Serial Number: {rsa_cert_sn}")
             valid_keyboxes += 1
+            # Move the valid keybox file to the "Strong Keyboxes" folder
+            os.rename(file_path, os.path.join(strong_keyboxes_dir, filename))
 
     # Summary Results
-    logging.info(f'\n{Fore.CYAN}{BOLD}Summary:')
-    logging.info(f'  Total XML files examined: {total_keyboxes}')
-    logging.info(f'  Valid Certificates: {valid_keyboxes}')
-    logging.info(f'  Revoked Certificates: {revoked_keyboxes}')
-    logging.info(f'  Invalid Keyboxes: {invalid_keyboxes}')
+    logging.info("\n" + "=" * 40)
+    logging.info(f"{Fore.CYAN}{BOLD}Summary:")
+    logging.info(f"  Total XML files examined: {total_keyboxes}")
+    logging.info(f"  Valid Certificates: {valid_keyboxes}")
+    logging.info(f"  Revoked Certificates: {revoked_keyboxes}")
+    logging.info(f"  Invalid Keyboxes: {invalid_keyboxes}")
+    logging.info("=" * 40)
 
 if __name__ == "__main__":
     main()
