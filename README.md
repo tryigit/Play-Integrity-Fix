@@ -48,7 +48,7 @@ Xiaomi may impose some restrictions on regional roms. Unfortunately, some phones
 Magisk zygisk will not use ram unnecessarily. Also modules like lsposed.
 
 > [!NOTE]
-> Shamiko and Lsposrd module pushes 32bit support (file integrity check) and causes an error, report this to the Shamiko/LSposed developer. Shamiko/LSposed is excluded for now.
+> Shamiko and LSPosed module pushes 32bit support (file integrity check) and causes an error, report this to the Shamiko/LSPosed developer. Shamiko/LSPosed is excluded for now.
 
 + **All System Apps Add Magiskhide List**
 
